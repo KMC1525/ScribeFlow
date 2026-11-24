@@ -1,0 +1,18 @@
+/* Configurações: modelo de texto (trocar, pesquisar e baixar do Hugging Face) */
+.sf-default{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px dashed var(--line3);border-radius:var(--r);padding:14px 16px;background:var(--bg)}
+.sf-active{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line2);border-radius:var(--r);padding:12px 14px;background:var(--bg)}
+.sf-active .nm,.sf-model .nm,.sf-res .nm,.sf-file .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.sf-models,.sf-results{display:flex;flex-direction:column;gap:8px}
+.sf-model{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--bg)}
+.sf-model.on{border-color:var(--accent)}
+.sf-model .grow,.sf-res .grow,.sf-file .grow{min-width:0}
+.sf-res{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--bg)}
+.sf-res.open{border-color:var(--line3)}
+.sf-files{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.sf-file{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--bg1)}
+.sf-file.rec{border-color:var(--line3)}
+.sf-prog{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.sf-prog .bar>i{transition:width .2s}
+.sf-active .chip.on,.sf-model .chip.on,.sf-file .chip.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.page.cfg code{font:12px var(--mono);background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:1px 6px}
+@media (max-width:600px){.sf-active,.sf-model{flex-wrap:wrap}}

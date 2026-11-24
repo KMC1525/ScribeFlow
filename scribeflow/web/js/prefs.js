@@ -1,0 +1,5 @@
+// Preferências de interface (settings.ui): leitura e aplicação na tela.
+export const DEFAULT_UI = { theme: 'dark', accent: '', scale: 100, density: 'comfortable', motion: 'auto', font: 'system', font_custom: '', shortcuts: true, welcome_done: false };
+
+export const ui = () => Object.assign({}, DEFAULT_UI, window.SCRIBEFLOW_UI || {});
+export function applyUi(next) { const merged = Object.assign({}, DEFAULT_UI, next || {}); if (window.SCRIBEFLOW_APPLY_UI) window.SCRIBEFLOW_APPLY_UI(merged); else window.SCRIBEFLOW_UI = merged; return merged; }

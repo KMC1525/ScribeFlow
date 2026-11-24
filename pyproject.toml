@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scribeflow"
+dynamic = ["version"]
+description = "ScribeFlow: editor de textos com IA local — romances, reportagens, análises, copy e trabalhos acadêmicos, no navegador, com modelos de texto do Hugging Face (GGUF). Comando: scribeflow."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "KMC" }]
+keywords = ["ai", "writing", "editor", "llm", "gguf", "huggingface", "llama.cpp", "local-first", "webui", "docx", "fiction"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Text Editors :: Word Processors",
+  "Topic :: Text Processing",
+]
+# Zero dependências obrigatórias: o núcleo (servidor, editor, projetos, .docx, corretor, downloads do Hugging Face) usa só a biblioteca padrão.
+dependencies = []
+
+[project.optional-dependencies]
+# O motor de IA local (llama.cpp). `scribeflow engine install` escolhe o pacote certo (pronto, se houver) para o seu computador.
+local = ["llama-cpp-python>=0.3.0"]
+all = ["llama-cpp-python>=0.3.0"]
+
+[project.urls]
+Homepage = "https://github.com/KMC1525/ScribeFlow"
+Issues = "https://github.com/KMC1525/ScribeFlow/issues"
+
+[project.scripts]
+scribeflow = "scribeflow.cli:main"
+scribe = "scribeflow.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["scribeflow*"]
+
+[tool.setuptools.package-data]
+scribeflow = ["web/**/*", "prompts/*.md"]
+
+[tool.setuptools.dynamic]
+version = { attr = "scribeflow.__version__" }
