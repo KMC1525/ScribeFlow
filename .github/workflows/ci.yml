@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: "Testes (${{ matrix.os }}, Python ${{ matrix.python }})"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-latest]
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar
+        run: python -m pip install -e .
+      - name: Testes
+        run: python -m unittest discover -s tests -t . -v
+
+  browser:
+    name: Navegador (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Playwright e Chromium
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
+          npm init -y >/dev/null
+          npm install playwright
+          npx playwright install --with-deps chromium
+      - name: Instalar
+        run: python -m pip install -e .
+      - name: Teste de navegador
+        env:
+          NODE_PATH: ${{ runner.temp }}/pw/node_modules
+        run: python -m unittest tests.test_browser -v
+
+  installer-unix:
+    name: "Instalador no terminal (${{ matrix.os }})"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    env:
+      SCRIBEFLOW_ENGINE: "no"     # o motor (llama.cpp) é pesado: o CI só confere o instalador
+      SCRIBEFLOW_MODEL: "no"      # nada de baixar o modelo no CI
+      SCRIBEFLOW_PYTHON: keep     # o Python do runner é gerenciado pelo GitHub
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sintaxe do install.sh
+        run: sh -n install.sh
+      - name: Instalar a partir desta pasta
+        run: SCRIBEFLOW_SOURCE="$PWD" sh install.sh
+      - name: O comando funciona
+        run: |
+          "$HOME/.local/bin/scribeflow" version
+          "$HOME/.local/bin/scribe" doctor
+      - name: Reinstalar (atualizar) sem erro
+        run: SCRIBEFLOW_SOURCE="$PWD" sh install.sh
+
+  installer-windows:
+    name: Instalador no PowerShell (Windows)
+    runs-on: windows-latest
+    env:
+      SCRIBEFLOW_ENGINE: "no"
+      SCRIBEFLOW_MODEL: "no"
+      SCRIBEFLOW_PYTHON: keep
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar a partir desta pasta
+        shell: pwsh
+        run: |
+          $env:SCRIBEFLOW_SOURCE = "$PWD"
+          ./install.ps1
+      - name: O comando funciona
+        shell: pwsh
+        run: |
+          & "$env:LOCALAPPDATA\ScribeFlow\app\venv\Scripts\scribeflow.exe" version
+          & "$env:LOCALAPPDATA\ScribeFlow\bin\scribeflow.cmd" doctor
